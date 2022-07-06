@@ -6,9 +6,23 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
-var app = express();
 var blogsRouter = require('./routes/blogs');
+var app = express();
+var { mongoConnect } = require('./mongo.js');
+mongoConnect();
+
+
+
+// *enable cors
+const cors = require("cors");
+// app.use(cors());
+// app.options("*", cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+
 app.use('/blogs', blogsRouter);
 
 
