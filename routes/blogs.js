@@ -3,7 +3,7 @@ var router = express.Router();
 
 // const { Db } = require('mongodb');
 const { blogsDB } = require("../mongo");
-
+const { serverCheckBlogIsValid } = require("../utils/validation");
 
 router.get('/hello-blogs', (req, res) => {
     res.json({ message: 'hello from express' })
@@ -12,7 +12,6 @@ router.get('/hello-blogs', (req, res) => {
 
 router.get("/all-blogs", async function (req, res, next) {
     try {
-        console.log(req.query.filterValue);
         const collection = await blogsDB().collection("blogs50")
         const limit = Number(req.query.limit)
         const skip = Number(req.query.limit) * (Number(req.query.page) - 1)
@@ -45,23 +44,24 @@ router.get("/all-blogs", async function (req, res, next) {
 
 router.post('/blog-submit', async function (req, res, next) {
     try {
-        console.log("testing before blogPost creation")
+        const blogIsValid = serverCheckBlogIsValid(req.body);
+
+        if (!blogIsValid) {
+            res.status(400).json({
+                message:
+                    "To submit a blog you must include Title, Author, Category, and Text.",
+                success: false,
+            })
+            return;
+        }
+
+
+        // console.log("testing before blogPost creation")
         const collection = await blogsDB().collection("blogs50");
-        // console.log("after collection")
-
         const sortedBlogArray = await collection.find({}).sort({ id: 1 }).toArray();
-        // console.log("after sortedBlogArray");
-
         const lastBlog = sortedBlogArray[sortedBlogArray.length - 1]
-        // console.log("lastBlog");
-        console.log("req body", req.body)//returns undefined
-
         const title = req.body.title
-        console.log("title", title);//returns undefined
-
         const text = req.body.text
-        console.log("text", req.body.text)
-
         const author = req.body.author
         const category = req.body.category
 
@@ -74,13 +74,13 @@ router.post('/blog-submit', async function (req, res, next) {
             id: Number(lastBlog.id + 1),
             lastModified: new Date()
         };
-        console.log(blogPost)
+        // console.log(blogPost)
 
         await collection.insertOne(blogPost);
-        // res.status(200).send("Post submitted");
+        res.status(200).json({ message: "Post successfully submitted", success: true });
     }
     catch (e) {
-        res.status(500).send("Error fetching posts." + e)
+        res.status(500).send({ message: "Error fetching posts." + e, success: false })
     }
 });
 
