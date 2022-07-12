@@ -34,6 +34,29 @@ const serverCheckBlogIsValid = (reqBody) => {
     return true;
 };
 
+
+const serverValidateBlogUpdate = (updateBlog, ogBlog) => {
+    const blogTitle = updateBlog.title ? updateBlog.title : ogBlog.title;
+    const blogText = updateBlog.text ? updateBlog.text : ogBlog.text;
+    const blogAuthor = updateBlog.author ? updateBlog.author : ogBlog.author;
+    const blogCategory = updateBlog.category ? updateBlog.category : ogBlog.category;
+
+    updateBlog = {
+        ...ogBlog,
+        lastModified: new Date(),
+        title: blogTitle,
+        text: blogText,
+        author: blogAuthor,
+        category: blogCategory,
+    };
+    return updateBlog;
+
+    // 
+}
+
+
+
 module.exports = {
     serverCheckBlogIsValid,
+    serverValidateBlogUpdate
 };
