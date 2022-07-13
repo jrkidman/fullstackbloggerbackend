@@ -11,14 +11,14 @@ const { serverCheckBlogIsValid } = require("../utils/validation");
 router.get("/blog-list", async function (req, res, next) {
     try {
         const collection = await blogsDB().collection("blogs50")
-        const blogs50 = await collection.find({}).projection({
+        const blogs50 = await collection.find({},).project({
             title: 1,
             author: 1,
             createdAt: 1,
             lastModified: 1,
             id: 1
         }).toArray();
-        res.status(200).json({ message: blogs, success: true })
+        res.status(200).json({ message: blogs50, success: true })
     }
     catch (e) {
         res.status(500).json({ message: "Error fetching posts.", success: false })
@@ -46,7 +46,7 @@ router.put('/edit-blog', async function (req, res) {
     }
 });
 
-router.delete("delete-blog/:blogId", async (req, res) => {
+router.delete("/delete-blog/:blogId", async (req, res) => {
     try {
         const collection = await blogsDB().collection('blogs50');
         const blogId = Number(req.params.blogId);
@@ -61,3 +61,5 @@ router.delete("delete-blog/:blogId", async (req, res) => {
         res.status(500).json({ message: "Error" + error, success: false });
     }
 })
+
+module.exports = router;
