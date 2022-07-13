@@ -18,7 +18,7 @@ router.get("/blog-list", async function (req, res, next) {
             lastModified: 1,
             id: 1
         }).toArray();
-        res.status(200).json({ message: "Success.", success: true })
+        res.status(200).json({ message: blogs, success: true })
     }
     catch (e) {
         res.status(500).json({ message: "Error fetching posts.", success: false })
@@ -29,13 +29,6 @@ router.get("/blog-list", async function (req, res, next) {
 
 router.put('/edit-blog', async function (req, res) {
     try {
-        // const collection = await blogsDB().collection('blogs50');
-        // const blogId = Number(req.body.id);
-        // const ogBlog = await collection.findOne({ id: blogID });
-
-        // if (!ogBlog) {
-        //     res.status(204).json({ message: "Cannot find blog.", success: false });
-        // } else {
         const updateBlogIsValid = serverCheckBlogIsValid(req.body);
         if (!updateBlogIsValid) {
             res.status(400).jason({ message: "Blog update is not valid.", success: false })
