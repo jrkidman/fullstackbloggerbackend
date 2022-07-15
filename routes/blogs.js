@@ -42,6 +42,23 @@ router.get("/all-blogs", async function (req, res, next) {
     }
 })
 
+
+router.get("/single-blog/:blogId", async (req, res) => {
+    try {
+        const blogId = Number(req.params.blogId);
+        const collection = await blogsDB().collection("blogs50")
+        const blogPost = await collection.findOne({ id: blogId })
+        res.status(200).json({ message: blogPost, success: true })
+
+    } catch (error) {
+        res.status(500).send({ message: "Error getting post.", success: false })
+    }
+})
+
+
+
+
+
 router.post('/blog-submit', async function (req, res, next) {
     try {
         const blogIsValid = serverCheckBlogIsValid(req.body);

@@ -17,7 +17,8 @@ router.get("/blog-list", async function (req, res, next) {
             createdAt: 1,
             lastModified: 1,
             id: 1
-        }).toArray();
+        })
+            .toArray();
         res.status(200).json({ message: blogs50, success: true })
     }
     catch (e) {
@@ -36,6 +37,8 @@ router.put('/edit-blog', async function (req, res) {
         const newPostData = req.body;
         const date = new Date();
         const updateBlog = { ...newPostData, lastModified: date };
+        const collection = await blogsDB().collection("blogs50")
+
 
         await collection.updateOne({ id: req.body.id }, { $set: { ...updateBlog } });
         res.status(200).json({ message: "Blog updated successfully.", message: true });
@@ -51,6 +54,7 @@ router.delete("/delete-blog/:blogId", async (req, res) => {
         const collection = await blogsDB().collection('blogs50');
         const blogId = Number(req.params.blogId);
         const blogToDelete = await collection.deleteOne({ id: blogId });
+
         if (blogToDelete.deletedCount === 1) {
             res.status(200).json({ message: "Successfully deleted.", message: true });
         } else {
